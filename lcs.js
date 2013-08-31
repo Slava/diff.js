@@ -70,3 +70,7 @@ var LCS = function (A, B, /* optional */ equals) {
   return midPoint(0, A.length - 1, 0, B.length - 1);
 };
 
+// Exports
+if (module)
+  module.exports = LCS;
+
