@@ -4,16 +4,24 @@ var LCS = require('./lcs.js');
 
 suite('Simple cases for correct length of LCS', function () {
   function t(a, b, r) {
-    //try {
-      assert.equal(LCS(a, b).length, r, a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + LCS(a, b).length + ' ' + r + ' ' + LCS(a, b));
-    //}catch(err){
-      //console.log('caught an error: ', err);
-      //assert(false,a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + r);
-    //}
+    var lcs = LCS(a, b);
+    if (r === -1)
+      r = lcs.length;
+    a = a.split('');
+    b = b.split('');
+
+    assert.equal(lcs.length, r, 'The length is not equal to expected');
+    assert(isSubsequence(lcs, a), 'Not subsequence of a:\n' + lcs.join('') + '\n' + a.join(''));
+    assert(isSubsequence(lcs, b), 'Not subsequence of b:\n' + lcs.join('') + '\n' + b.join(''));
   };
   test('Manual minimal', function () {
     t('a', 'zz', 0);
+    t('dcbc', 'cd', 1);
+    t('ddd', 'dd', 2);
+    t('c', 'dccc', 1);
+    t('cbd', 'dccc', 1);
   });
+  return;
   test('Manual tests', function () {
     t('abcabba', 'cbabac', 4);
     t('qqq123ag', 'zqoagq2a', 4);
@@ -21,6 +29,20 @@ suite('Simple cases for correct length of LCS', function () {
     t('a', 'b', 0);
     t('aa', 'b', 0);
   });
+  test('Generated minimal', function () {
+    var alphabet = "abcd";
+    for (var i = 0; i < 10000; i++) {
+      var A = "", B = "";
+      var n = Math.floor(Math.random() * 3) + 2;
+      for (var j = 0; j < n; j++)
+        A += alphabet[Math.floor(Math.random() * 4)];
+      var n = Math.floor(Math.random() * 2) + 2;
+      for (var j = 0; j < n; j++)
+        B += alphabet[Math.floor(Math.random() * 4)];
+      t(A, B, -1);
+    }
+  });
+  return;
   test('From UVA forums', function () {
     // http://online-judge.uva.es/board/viewtopic.php?f=23&t=8864&start=90
     // lots of generated small tests, I was lazy to generate ones on my own
@@ -126,3 +148,16 @@ suite('Simple cases for correct length of LCS', function () {
     t ('newtqpviflrxjwfiqfzfmpyebx', 'piwlychrsxmdeyubhqirjnqobhogknmbwkmumulhtxmxxgagyjxhyqyaxogkculyhyst', 10);
   });
 });
+
+var isSubsequence = function (subsequence, sequence) {
+  var lastIndex = -1;
+  for (var i = 0; i < subsequence.length; i++) {
+    var e = subsequence[i];
+    var index = sequence.indexOf(e, lastIndex + 1);
+    if (index === -1)
+      return false;
+    lastIndex = index;
+  }
+  return true;
+};
+
