@@ -25,7 +25,8 @@ var LCS = function (A, B, /* optional */ equals) {
     // D-path on current iteration.
     var V = {};
 
-    V[0] = 0;
+    // Special case for the base case, D = 0, k = 0, x = y = 0
+    V[1] = 0;
 
     // Iterate over each possible length of edit script
     for (var D = 0; D <= Max; D++) {
@@ -61,13 +62,13 @@ var LCS = function (A, B, /* optional */ equals) {
 
         // If we reached the end point of edit graph, then we found an answer
         if (x === N && y === M)
-          return [undefined, undefined, D, N + M - D]; // TODO: midpoint
+          return [undefined, undefined, D, (N + M - D)/2]; // TODO: midpoint
       }
     }
   };
 
   // XXX temp
-  return midPoint(0, A.length - 1, 0, B.length - 1);
+  return midPoint(0, A.length - 1, 0, B.length - 1)[3];
 };
 
 // Exports
