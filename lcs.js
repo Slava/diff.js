@@ -11,6 +11,7 @@ var LCS = function (A, B, /* optional */ equals) {
   if (equals === undefined)
     equals = function (a, b) { return a === b; };
 
+  // NOTE: all intervals from now on are both sides inclusive
   // Get the points in Edit Graph, one of the LCS paths goes through.
   // The points are located on the same diagonal and represent the middle
   // snake (D/2 out of D) in the optimal edit path in edit graph.
@@ -22,7 +23,7 @@ var LCS = function (A, B, /* optional */ equals) {
   //                   [u, v], - end of the middle snake
   //                    D,     - optimal edit distance
   //                    LCS ]  - length of LCS
-  var midSnake = function (startA, endA, startB, endB) {
+  var findMidSnake = function (startA, endA, startB, endB) {
     var N = endA - startA + 1;
     var M = endB - startB + 1;
     var Max = N + M;
@@ -108,13 +109,53 @@ var LCS = function (A, B, /* optional */ equals) {
 
       if (overlap) {
         SES = SES || D * 2;
+        // Remember we had offset of each sequence?
+        for (var i = 0; i < 2; i++) for (var j = 0; j < 2; j++)
+          overlap[i][j] += [startA, startB][j] - 1;
         return overlap.concat([ SES, (Max - SES) / 2 ]);
       }
     }
   };
 
-  // XXX temp
-  return midSnake(0, A.length - 1, 0, B.length - 1)[3];
+  var lcsAtoms = [];
+  var lcs = function (startA, endA, startB, endB) {
+    var N = endA - startA + 1;
+    var M = endB - startB + 1;
+    console.log(startA, endA, startB, endB, N, M);
+
+    if (N > 0 && M > 0) {
+      var middleSnake = findMidSnake(startA, endA, startB, endB);
+      var x = middleSnake[0][0], y = middleSnake[0][1];
+      var u = middleSnake[1][0], v = middleSnake[1][1];
+      var D = middleSnake[2];
+
+      console.log(D, middleSnake);
+      if (D > 1) {
+        lcs(startA, x, startB, y);
+        if (x < u) {
+          console.log('atoms', x, u, A.slice(x + 1, u - (x + 1) - 1));
+            [].push.apply(lcsAtoms, A.slice(x + 1, u - (x + 1) - 1));
+          }
+        lcs(u + 1, endA, v + 1, endB);
+      } else if (M > N) {
+        console.log('AAA', startA, N, A.slice(startA, N));
+        [].push.apply(lcsAtoms, A.slice(startA, N));
+      }
+      else {
+        console.log('BBB', startB, M, B.slice(startB, M));
+        [].push.apply(lcsAtoms, B.slice(startB, M));
+      }
+    }
+  };
+
+  // XXX shouldn't change the arguments
+  if (typeof A === "string") {
+    A = A.split();
+    B = B.split();
+  }
+
+  lcs(0, A.length - 1, 0, B.length - 1);
+  return lcsAtoms;
 };
 
 // Helpers
