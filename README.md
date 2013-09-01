@@ -43,6 +43,28 @@ MIT Licensed, Vyacheslav Kim.
 [0]: http://en.wikipedia.org/wiki/Diff
 [1]: http://www.xmailserver.org/diff2.pdf
 
+Internals
+---------
+
+![Example](https://raw.github.com/Slava/diff.js/master/example.png)
+
+So we work on edit graph grid. Our goal is to find a path from point (0,0) to
+(N,M) with maximum number of diagonal moves. Each diagonal move means a matching
+atom in a subsequence, each move to the straight right means adding an atom from
+second sequence, move straight down means removing an atom from first sequence.
+
+You can see, this problem is identical to Longest Common Subsequence and
+Shortest Edit Script. Each is solvable with Dynamic Programming in square time
+complexity but bottom-up DP tends to be slower then an optimized greedy solution
+in general cases of file comparisons (users tend to compare similar files).
+
+The idea is to build greedy paths with every iteration of "bad moves" for every
+diagonal, from both sides: upper-left corner and bottom-right corner. We claim,
+they will meet in half moves.
+
+It is also the key to linear memory usage, but the same optimization could be
+applied to bottom-up DP.
+
 Testing
 -------
 
