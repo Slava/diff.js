@@ -111,7 +111,7 @@ var LCS = function (A, B, /* optional */ equals) {
         SES = SES || D * 2;
         // Remember we had offset of each sequence?
         for (var i = 0; i < 2; i++) for (var j = 0; j < 2; j++)
-          overlap[i][j] += [startA, startB][j] - 1;
+          overlap[i][j] += [startA, startB][j] - i;
         return overlap.concat([ SES, (Max - SES) / 2 ]);
       }
     }
@@ -121,37 +121,33 @@ var LCS = function (A, B, /* optional */ equals) {
   var lcs = function (startA, endA, startB, endB) {
     var N = endA - startA + 1;
     var M = endB - startB + 1;
-    console.log(startA, endA, startB, endB, N, M);
 
     if (N > 0 && M > 0) {
       var middleSnake = findMidSnake(startA, endA, startB, endB);
+      // A[x;u] == B[y,v] and is part of LCS
       var x = middleSnake[0][0], y = middleSnake[0][1];
       var u = middleSnake[1][0], v = middleSnake[1][1];
       var D = middleSnake[2];
 
-      console.log(D, middleSnake);
       if (D > 1) {
-        lcs(startA, x, startB, y);
-        if (x < u) {
-          console.log('atoms', x, u, A.slice(x + 1, u - (x + 1) - 1));
-            [].push.apply(lcsAtoms, A.slice(x + 1, u - (x + 1) - 1));
-          }
+        lcs(startA, x - 1, startB, y - 1);
+        if (x <= u) {
+          [].push.apply(lcsAtoms, A.slice(x, u + 1));
+        }
         lcs(u + 1, endA, v + 1, endB);
       } else if (M > N) {
-        console.log('AAA', startA, N, A.slice(startA, N));
-        [].push.apply(lcsAtoms, A.slice(startA, N));
+        [].push.apply(lcsAtoms, A.slice(startA, endA + 1));
       }
       else {
-        console.log('BBB', startB, M, B.slice(startB, M));
-        [].push.apply(lcsAtoms, B.slice(startB, M));
+        [].push.apply(lcsAtoms, B.slice(startB, endB + 1));
       }
     }
   };
 
   // XXX shouldn't change the arguments
   if (typeof A === "string") {
-    A = A.split();
-    B = B.split();
+    A = A.split("");
+    B = B.split("");
   }
 
   lcs(0, A.length - 1, 0, B.length - 1);

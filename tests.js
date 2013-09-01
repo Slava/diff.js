@@ -5,7 +5,7 @@ var LCS = require('./lcs.js');
 suite('Simple cases for correct length of LCS', function () {
   function t(a, b, r) {
     //try {
-      assert.equal(LCS(a, b).length, r, a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + LCS(a, b).length + ' ' + r);
+      assert.equal(LCS(a, b).length, r, a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + LCS(a, b).length + ' ' + r + ' ' + LCS(a, b));
     //}catch(err){
       //console.log('caught an error: ', err);
       //assert(false,a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + r);
