@@ -11,39 +11,53 @@ var LCS = function (A, B, /* optional */ equals) {
   if (equals === undefined)
     equals = function (a, b) { return a === b; };
 
-  // Get the point in Edit Graph, one of the LCS paths goes through.
-  // Ideally the point equally divides [startA;endA] and [startB;endB] in two
+  // Get the points in Edit Graph, one of the LCS paths goes through.
+  // The points are located on the same diagonal and represent the middle
+  // snake (D/2 out of D) in the optimal edit path in edit graph.
   // parts each.
   // @param startA, endA - substring of A we are working on
   // @param startB, endB - substring of B we are working on
-  // @returns Array - [midA, midB, D, L] - midpoints, edit distance, LCS length
-  var midPoint = function (startA, endA, startB, endB) {
+  // @returns Array - [
+  //                   [x, y], - beginning of the middle snake
+  //                   [u, v], - end of the middle snake
+  //                    D,     - optimal edit distance
+  //                    LCS ]  - length of LCS
+  var midSnake = function (startA, endA, startB, endB) {
     var N = endA - startA + 1;
     var M = endB - startB + 1;
     var Max = N + M;
+    var Delta = N - M;
+    var halfMaxCeil = (Max + 1) / 2 | 0;
+
+    var foundOverlap = false;
+    var overlap = null;
+
     // Maps -Max .. 0 .. +Max, diagonal index to endpoints for furthest reaching
     // D-path on current iteration.
     var V = {};
+    // Same but for reversed paths.
+    var U = {};
 
     // Special case for the base case, D = 0, k = 0, x = y = 0
     V[1] = 0;
+    // Special case for the base case reversed, D = 0, k = 0, x = N, y = M
+    U[Delta - 1] = N;
 
     // Iterate over each possible length of edit script
-    for (var D = 0; D <= Max; D++) {
+    for (var D = 0; D <= halfMaxCeil; D++) {
       // Iterate over each diagonal
       for (var k = -D; k <= D; k += 2) {
         // Positions in sequences A and B of furthest going D-path on diagonal k.
         var x, y;
 
         // Choose from each diagonal we extend
-        if (k === -D || (k !== D && V[k - 1] < V[k + 1])) {
+        if (k === -D || (k !== D && V[k - 1] < V[k + 1]))
           // Extending path one point down, that's why x doesn't change, y
           // increases implicitly
           x = V[k + 1];
-        } else {
+        else
           // Extending path one point to the right, x increases
           x = V[k - 1] + 1;
-        }
 
         // We can calculate the y out of x and diagonal index.
         y = x - k;
@@ -60,15 +74,55 @@ var LCS = function (A, B, /* optional */ equals) {
         // diagonals of different iteration.
         V[k] = x;
 
-        // If we reached the end point of edit graph, then we found an answer
-        if (x === N && y === M)
-          return [undefined, undefined, D, (N + M - D)/2]; // TODO: midpoint
+        // Check feasibility, Delta is checked for being odd.
+        if ((Delta & 1) === 1 && inRange(k, Delta - (D - 1), Delta + (D - 1)))
+          // Forward D-path can overlap with reversed D-1-path
+          if (U[k] !== undefined && U[k] <= V[k])
+            // Found an overlap, the middle snake
+            overlap = [[U[k], U[k] - k], [x, y]];
+      }
+
+      if (overlap)
+        var SES = D * 2 - 1;
+
+      // Iterate over each diagonal for reversed case
+      for (var k = -D; k <= D; k += 2) {
+        // The real diagonal we are looking for is k + Delta
+        var K = k + Delta;
+        var x, y;
+        if (k === D || (k !== -D && U[K - 1] < U[K + 1]))
+          x = U[K - 1];
+        else
+          x = U[K + 1] - 1;
+
+        y = x - K;
+        while (x > 0 && y > 0 && equals(A[startA + x - 1], B[startB + y - 1])) {
+          x--; y--;
+        }
+        U[K] = x;
+
+        if (Delta % 2 === 0 && inRange(K, -D, D))
+          if (V[K] !== undefined && V[K] >= U[K])
+            overlap = [[x, y], [V[K], V[K] - K]];
+      }
+
+      if (overlap) {
+        SES = SES || D * 2;
+        return overlap.concat([ SES, (Max - SES) / 2 ]);
       }
     }
+
+    // Overlap wasn't found
+    return [null, null, Max, 0];
   };
 
   // XXX temp
-  return midPoint(0, A.length - 1, 0, B.length - 1)[3];
+  return midSnake(0, A.length - 1, 0, B.length - 1)[3];
+};
+
+// Helpers
+var inRange = function (x, l, r) {
+  return (l <= x && x <= r) || (r <= x && x <= l);
 };
 
 // Exports

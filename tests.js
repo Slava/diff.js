@@ -4,12 +4,22 @@ var LCS = require('./lcs.js');
 
 suite('Simple cases for correct length of LCS', function () {
   function t(a, b, r) {
-    assert.equal(LCS(a, b), r);
+    //try {
+      assert.equal(LCS(a, b), r, a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + LCS(a, b) + ' ' + r);
+    //}catch(err){
+      //console.log('caught an error: ', err);
+      //assert(false,a.length + ' ' + b.length + '\n' + a + ' ' + b + '\n' + r);
+    //}
   };
+  test('Manual minimal', function () {
+    t('a', 'zz', 0);
+  });
   test('Manual tests', function () {
     t('abcabba', 'cbabac', 4);
     t('qqq123ag', 'zqoagq2a', 4);
     t('zzzz', 'aaaaaaaa', 0);
+    t('a', 'b', 0);
+    t('aa', 'b', 0);
   });
   test('From UVA forums', function () {
     // http://online-judge.uva.es/board/viewtopic.php?f=23&t=8864&start=90
