@@ -15,7 +15,7 @@ Overview
 > -- <cite>[Wikipedia][0]</cite>
 
 JavaScript implementation of reasonably fast `diff` algorithm. [Paper of Eugene
-W. Mayers] was used a reference during implementation.
+W. Mayers][1] was used a reference during implementation.
 
 First version of algorithm will run in O(N+D^2) time complexity in general
 cases, where D is the length of difference and N is the length of input. The
