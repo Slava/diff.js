@@ -111,9 +111,6 @@ var LCS = function (A, B, /* optional */ equals) {
         return overlap.concat([ SES, (Max - SES) / 2 ]);
       }
     }
-
-    // Overlap wasn't found
-    return [null, null, Max, 0];
   };
 
   // XXX temp
