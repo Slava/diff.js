@@ -21,7 +21,6 @@ suite('Simple cases for correct length of LCS', function () {
     t('c', 'dccc', 1);
     t('cbd', 'dccc', 1);
   });
-  return;
   test('Manual tests', function () {
     t('abcabba', 'cbabac', 4);
     t('qqq123ag', 'zqoagq2a', 4);
