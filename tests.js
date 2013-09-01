@@ -4,15 +4,13 @@ var LCS = require('./lcs.js');
 
 suite('Simple cases for correct length of LCS', function () {
   function t(a, b, r) {
-    var lcs = LCS(a, b);
+    var lcs = LCS.StringLCS(a, b);
     if (r === -1)
       r = lcs.length;
-    a = a.split('');
-    b = b.split('');
 
     assert.equal(lcs.length, r, 'The length is not equal to expected');
-    assert(isSubsequence(lcs, a), 'Not subsequence of a:\n' + lcs.join('') + '\n' + a.join(''));
-    assert(isSubsequence(lcs, b), 'Not subsequence of b:\n' + lcs.join('') + '\n' + b.join(''));
+    assert(isSubsequence(lcs, a), 'Not subsequence of a:\n' + lcs + '\n' + a);
+    assert(isSubsequence(lcs, b), 'Not subsequence of b:\n' + lcs + '\n' + b);
   };
   test('Manual minimal', function () {
     t('a', 'zz', 0);

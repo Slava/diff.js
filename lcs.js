@@ -1,8 +1,8 @@
 // Refer to http://www.xmailserver.org/diff2.pdf
 
 // Longest Common Subsequence
-// @param A - sequence of atoms - String or Array
-// @param B - sequence of atoms - String or Array
+// @param A - sequence of atoms - Array
+// @param B - sequence of atoms - Array
 // @param equals - optional comparator of atoms - returns true or false,
 //                 if not specified, triple equals operator is used
 // @returns Array - sequence of atoms, one of LCSs, edit script from A to B
@@ -149,12 +149,6 @@ var LCS = function (A, B, /* optional */ equals) {
     }
   };
 
-  // XXX shouldn't change the arguments
-  if (typeof A === "string") {
-    A = A.split("");
-    B = B.split("");
-  }
-
   lcs(0, A.length - 1, 0, B.length - 1);
   return lcsAtoms;
 };
@@ -167,7 +161,12 @@ var inRange = function (x, l, r) {
 // Takes X-component as argument, diagonal as context,
 // returns array-pair of form x, y
 var toPoint = function (x) {
-  return [x, x - this];
+  return [x, x - this];  // XXX context is not the best way to pass diagonal
+};
+
+// Wrappers
+LCS.StringLCS = function (A, B) {
+  return LCS(A.split(''), B.split('')).join('');
 };
 
 // Exports
