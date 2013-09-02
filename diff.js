@@ -47,6 +47,6 @@ var diff = function (A, B, equals) {
 };
 
 // Exports
-if (module)
+if (typeof module !== "undefined")
   module.exports = diff;
 

@@ -170,6 +170,6 @@ LCS.StringLCS = function (A, B) {
 };
 
 // Exports
-if (module)
+if (typeof module !== "undefined")
   module.exports = LCS;
 
