@@ -83,6 +83,7 @@ to this document.
     };
 
     $('textarea').change(calculateDiff);
+    $('textarea').on('keyup', calculateDiff);
 
     calculateDiff();
   });
