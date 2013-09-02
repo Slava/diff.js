@@ -43,6 +43,16 @@ var diff = function (A, B, equals) {
     j = nj + 1;
   }
 
+  // Don't forget about the rest
+
+  [].push.apply(diff, A.slice(i, A.length).map(function (atom) {
+    return { operation: "delete", atom: atom };
+  }));
+
+  [].push.apply(diff, B.slice(j, B.length).map(function (atom) {
+    return { operation: "add", atom: atom };
+  }));
+
   return diff;
 };
 
