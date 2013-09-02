@@ -4,7 +4,7 @@ diff.js
 Overview
 --------
 
-[Simplest Demo][http://rawgithub.com/Slava/diff.js/master/demo/byline.html].
+[Simplest Demo][2].
 
 > `diff` is a file comparison utility that outputs the differences between two
 > files. It is typically used to show the changes between one version of a file
@@ -44,6 +44,7 @@ MIT Licensed, Vyacheslav Kim.
 
 [0]: http://en.wikipedia.org/wiki/Diff
 [1]: http://www.xmailserver.org/diff2.pdf
+[2]: http://rawgithub.com/Slava/diff.js/master/demo/byline.html
 
 Internals
 ---------
@@ -77,3 +78,19 @@ npm install mocha
 ./run_tests.sh
 ```
 
+Call for contributors
+---------------------
+
+The main part is done, we have base LCS algorithm which runs reasonably fast
+and consumes linear amount of memory. Based on it, it is trivial to implement
+`diff` and `patch`.
+
+Next step could be implementation of utilities coming along with `diff`,
+improving the performance of LCS-algorithm utilizing suffix tree or suffix array.
+
+There is a lot of work which doesn't require strong knowledge of LCS algorithm,
+such as packaging the code for node.js, Meteor, browserify and others. Making
+sure code runs in all browsers in use (currently it relies on ES5 extentions).
+
+Good demo page is needed! Since this implementation is general enough, we can run
+diffs by lines, by words.
