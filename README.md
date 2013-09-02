@@ -4,6 +4,8 @@ diff.js
 Overview
 --------
 
+[Simplest Demo][http://rawgithub.com/Slava/diff.js/master/demo/byline.html].
+
 > `diff` is a file comparison utility that outputs the differences between two
 > files. It is typically used to show the changes between one version of a file
 > and a former version of the same file. Diff displays the changes made per line
@@ -46,7 +48,7 @@ MIT Licensed, Vyacheslav Kim.
 Internals
 ---------
 
-![Example](https://raw.github.com/Slava/diff.js/master/example.png)
+![Example](./example.png)
 
 So we work on edit graph grid. Our goal is to find a path from point (0,0) to
 (N,M) with maximum number of diagonal moves. Each diagonal move means a matching

@@ -5,8 +5,6 @@
 <title>diff demo - by line</title>
 </head>
 <body>
-  <h1>diff.js</h1>
-  <a href="https://github.com/slava/diff.js">Source Code</a>
   <div>
   <textarea cols="40" rows="20" name="before" id="before">
 This part of the
@@ -65,21 +63,45 @@ important new additions
 to this document.
   </textarea>
   </div>
-  <div style="font-size:12px;width:600px;height:300px;" id="e"></div><script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js"></script><script>e=ace.edit("e");e.getSession().setMode("ace/mode/diff");e.setTheme("ace/theme/twilight");e.renderer.setShowGutter(false);</script>
-  <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+  <div style="font-size:12px;width:600px;height:300px;" id="e"></div><script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js"></script><script>e=ace.edit("e");e.setTheme("ace/theme/twilight");e.renderer.setShowGutter(false);</script>
+  <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
   <script src="https://rawgithub.com/Slava/diff.js/master/lcs.js"></script>
   <script src="https://rawgithub.com/Slava/diff.js/master/diff.js"></script>
   <script>
+var splitByWords = function (text) {
+  var rules = [/^\s+/, /^\w+/i];
+  var lexems = [];
+  while (text.length > 0) {
+    var parsed = false;
+    for (var i = 0; i < rules.length; i++) {
+      var m = rules[i].exec(text);
+      if (m) {
+        m = m[0];
+        lexems.push(m);
+        text = text.slice(m.length, text.length);
+        parsed = true;
+        break;
+      }
+    }
+    
+    if (!parsed) {
+      lexems.push(text[0]);
+      text = text.slice(1, text.length);
+    }
+  }
+  
+  return lexems;
+};
   $(function () {
     var calculateDiff = function() {
       var before = $('#before').val();
       var after = $('#after').val();
 
-      var diffOps = diff(before.split('\n'), after.split('\n'));
+      var diffOps = diff(splitByWords(before), splitByWords(after));
 
       e.getSession().setValue(diffOps.map(function (o) {
-        return (o.operation === "none" ? ' ' : o.operation === "add" ? '+' : '-') + ' ' + o.atom;
-      }).join('\n'));
+        return (o.operation === "none" ? o.atom : o.operation === "add" ? '(+'+o.atom+')' : '(-'+o.atom+')');
+      }).join(''));
     };
 
     $('textarea').change(calculateDiff);
@@ -89,4 +111,5 @@ to this document.
   </script>
 </body>
 </html>
+
 

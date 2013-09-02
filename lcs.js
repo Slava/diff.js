@@ -14,8 +14,7 @@ var LCS = function (A, B, /* optional */ equals) {
   // NOTE: all intervals from now on are both sides inclusive
   // Get the points in Edit Graph, one of the LCS paths goes through.
   // The points are located on the same diagonal and represent the middle
-  // snake (D/2 out of D) in the optimal edit path in edit graph.
-  // parts each.
+  // snake ([D/2] out of D+1) in the optimal edit path in edit graph.
   // @param startA, endA - substring of A we are working on
   // @param startB, endB - substring of B we are working on
   // @returns Array - [
