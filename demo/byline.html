@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>diff demo - by line</title>
+</head>
+<body>
+  <div>
+  <textarea cols="40" rows="20" name="before" id="before">
+This part of the
+document has stayed the
+same from version to
+version.  It shouldn't
+be shown if it doesn't
+change.  Otherwise, that
+would not be helping to
+compress the size of the
+changes.
+
+This paragraph contains
+text that is outdated.
+It will be deleted in the
+near future.
+
+It is important to spell
+check this dokument. On
+the other hand, a
+misspelled word isn't
+the end of the world.
+Nothing in the rest of
+this paragraph needs to
+be changed. Things can
+be added after it.
+  </textarea>
+  <textarea cols="40" rows="20" name="after" id="after">
+This is an important
+notice! It should
+therefore be located at
+the beginning of this
+document!
+
+This part of the
+document has stayed the
+same from version to
+version.  It shouldn't
+be shown if it doesn't
+change.  Otherwise, that
+would not be helping to
+compress anything.
+
+It is important to spell
+check this document. On
+the other hand, a
+misspelled word isn't
+the end of the world.
+Nothing in the rest of
+this paragraph needs to
+be changed. Things can
+be added after it.
+
+This paragraph contains
+important new additions
+to this document.
+  </textarea>
+  </div>
+  <div style="font-size:12px;width:600px;height:300px;" id="e"></div><script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js"></script><script>e=ace.edit("e");e.getSession().setMode("ace/mode/diff");e.setTheme("ace/theme/twilight");e.renderer.setShowGutter(false);</script>
+  <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="https://rawgithub.com/Slava/diff.js/master/lcs.js"></script>
+  <script src="https://rawgithub.com/Slava/diff.js/master/diff.js"></script>
+  <script>
+  $(function () {
+    var calculateDiff = function() {
+      var before = $('#before').val();
+      var after = $('#after').val();
+
+      var diffOps = diff(before.split('\n'), after.split('\n'));
+
+      e.getSession().setValue(diffOps.map(function (o) {
+        return (o.operation === "none" ? ' ' : o.operation === "add" ? '+' : '-') + ' ' + o.atom;
+      }).join('\n'));
+    };
+
+    $('textarea').change(calculateDiff);
+
+    calculateDiff();
+  });
+  </script>
+</body>
+</html>
+
