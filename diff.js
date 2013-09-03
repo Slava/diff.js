@@ -16,14 +16,25 @@ var diff = function (A, B, equals) {
   if (equals === undefined)
     equals = function (a, b) { return a === b; };
 
-  var lcs = LCS(A, B, equals);
   var diff = [];
   var i = 0, j = 0;
+  var N = A.length, M = B.length, K = 0;
+
+  while (i < N && j < M && equals(A[i], B[j]))
+    i++, j++;
+
+  while (i < N && j < M && equals(A[N-1], B[M-1]))
+    N--, M--, K++;
+
+  [].push.apply(diff, A.slice(0, i).map(function (atom) {
+    return { operation: "none", atom: atom }; }));
+
+  var lcs = LCS(A.slice(i, N), B.slice(j, M), equals);
 
   for (var k = 0; k < lcs.length; k++) {
     var atom = lcs[k];
-    var ni = A.indexOf(atom, i);
-    var nj = B.indexOf(atom, j);
+    var ni = customIndexOf.call(A, atom, i, equals);
+    var nj = customIndexOf.call(B, atom, j, equals);
 
     // XXX ES5 map
     // Delete unmatched atoms from A
@@ -45,15 +56,27 @@ var diff = function (A, B, equals) {
 
   // Don't forget about the rest
 
-  [].push.apply(diff, A.slice(i, A.length).map(function (atom) {
+  [].push.apply(diff, A.slice(i, N).map(function (atom) {
     return { operation: "delete", atom: atom };
   }));
 
-  [].push.apply(diff, B.slice(j, B.length).map(function (atom) {
+  [].push.apply(diff, B.slice(j, M).map(function (atom) {
     return { operation: "add", atom: atom };
   }));
 
+  [].push.apply(diff, A.slice(N, N + K).map(function (atom) {
+    return { operation: "none", atom: atom }; }));
+
   return diff;
+};
+
+// Accepts custom comparator
+var customIndexOf = function(item, start, equals){
+  var arr = this;
+  for (var i = start; i < arr.length; i++)
+    if (equals(item, arr[i]))
+      return i;
+  return -1;
 };
 
 // Exports
